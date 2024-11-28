@@ -63,6 +63,11 @@ endif()
 set(SOURCES
   src/main.cpp
   src/app.cpp
+
+  src/app/logging/details/registry.cpp
+
+  src/infra/logging/loggers/console_logger.cpp
+  src/infra/logging/loggers/file_logger.cpp  
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
@@ -71,7 +76,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
   "${CMAKE_SOURCE_DIR}/include"
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE 
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC 
   Threads::Threads
   boost::boost
   spdlog::spdlog
