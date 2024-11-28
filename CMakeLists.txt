@@ -62,6 +62,7 @@ endif()
 
 set(SOURCES
   src/main.cpp
+  src/app.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
