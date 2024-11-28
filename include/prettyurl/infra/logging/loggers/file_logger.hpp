@@ -1,6 +1,6 @@
 #pragma once
 
-#include "prettyurl/core/logging/loggers/logger_impl_base.hpp"
+#include "prettyurl/core/logging/logger.hpp"
 #include "prettyurl/infra/logging/loggers/spd_logger_impl.hpp"
 
 #include <filesystem>
