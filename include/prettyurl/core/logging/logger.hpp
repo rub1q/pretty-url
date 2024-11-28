@@ -19,7 +19,7 @@ public:
       return;
     }
     
-    const auto fmt_str = fmtns::vformat(format, fmtns::make_format_args(args...));
+    const auto fmt_str = utils::format(format, std::forward<decltype(args)>(args)...);
     do_append(level, fmt_str);
   }
 
