@@ -16,7 +16,7 @@ file_logger::~file_logger() {
 }
 
 file_logger::file_logger(std::string_view name, const fs::path& log_path) 
-  : core::logging::logger(name) {
+  : core::logging::base_logger(name) {
   if (!fs::exists(log_path)) {
     fs::create_directories(log_path.parent_path());
   }

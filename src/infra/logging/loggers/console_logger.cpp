@@ -14,7 +14,7 @@ console_logger::~console_logger() {
 }
 
 console_logger::console_logger(std::string_view name) 
-  : core::logging::logger(name) {
+  : core::logging::base_logger(name) {
   pimpl_->logger = spdlog::stdout_color_mt<spdlog::async_factory>(name.data());
   pimpl_->logger->set_level(spdlog::level::trace);
 

@@ -5,11 +5,11 @@
 
 namespace prettyurl::core::logging {
 
-class logger {
+class base_logger {
 public:
-  virtual ~logger() = default;
+  virtual ~base_logger() = default;
 
-  constexpr explicit logger(std::string_view name)
+  constexpr explicit base_logger(std::string_view name)
     : name_(std::move(name)) {
   }
 

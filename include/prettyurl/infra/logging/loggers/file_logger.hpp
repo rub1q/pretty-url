@@ -1,6 +1,6 @@
 #pragma once
 
-#include "prettyurl/core/logging/logger.hpp"
+#include "prettyurl/core/logging/base_logger.hpp"
 #include "prettyurl/infra/logging/loggers/spd_logger_impl.hpp"
 
 #include <filesystem>
@@ -8,7 +8,7 @@
 namespace prettyurl::infra::logging {
 namespace loggers {
 
-class file_logger final : public core::logging::logger {
+class file_logger final : public core::logging::base_logger {
 public:
   ~file_logger();
   

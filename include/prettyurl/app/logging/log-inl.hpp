@@ -7,23 +7,23 @@
 namespace prettyurl::app::logging {
 
 template <typename T, typename... Args>
-requires(std::is_base_of_v<core::logging::logger, T> == true)
-inline std::shared_ptr<core::logging::logger> create(std::string_view name, Args&&... args) {
+requires(std::is_base_of_v<core::logging::base_logger, T> == true)
+inline std::shared_ptr<core::logging::base_logger> create(std::string_view name, Args&&... args) {
   const auto logger = std::make_shared<T>(name, std::forward<decltype(args)>(args)...);
   details::registry::instance().register_logger(name, logger);
 
   return logger;
 }
 
-[[nodiscard]] inline std::shared_ptr<core::logging::logger> get(std::string_view name) {
+[[nodiscard]] inline std::shared_ptr<core::logging::base_logger> get(std::string_view name) {
   return details::registry::instance().get(name);
 }
 
-[[nodiscard]] inline std::shared_ptr<core::logging::logger> get_default_logger() {
+[[nodiscard]] inline std::shared_ptr<core::logging::base_logger> get_default_logger() {
   return details::registry::instance().get_default_logger();
 }
 
-[[nodiscard]] inline core::logging::logger* get_default_logger_raw() {
+[[nodiscard]] inline core::logging::base_logger* get_default_logger_raw() {
   return details::registry::instance().get_default_logger_raw();
 }
 
@@ -31,7 +31,7 @@ inline std::shared_ptr<core::logging::logger> create(std::string_view name, Args
   return get_default_logger_raw()->get_log_level();
 } 
 
-inline void set_default_logger(std::shared_ptr<core::logging::logger> logger) {
+inline void set_default_logger(std::shared_ptr<core::logging::base_logger> logger) {
   return details::registry::instance().set_default_logger(std::move(logger));
 }
 
@@ -78,4 +78,4 @@ inline void release() {
   details::registry::instance().release();
 }
 
-} // namespace prettyurl::frameworks::logging
+} // namespace prettyurl::app::logging

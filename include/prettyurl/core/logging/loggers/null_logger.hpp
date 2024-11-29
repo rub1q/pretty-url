@@ -1,13 +1,13 @@
 #pragma once
 
-#include "prettyurl/core/logging/logger.hpp"
+#include "prettyurl/core/logging/base_logger.hpp"
 
 namespace prettyurl::core::logging::loggers {
 
-class null_logger final : public logger {
+class null_logger final : public base_logger {
 public:
   null_logger() 
-    : logger("null") {  
+    : base_logger("null") {  
   }
 
 private:

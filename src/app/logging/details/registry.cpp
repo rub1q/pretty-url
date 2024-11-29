@@ -8,22 +8,22 @@ registry& registry::instance() noexcept {
   return reg;
 }
 
-void registry::register_logger(std::string_view name, std::shared_ptr<core::logging::logger> logger) {
+void registry::register_logger(std::string_view name, std::shared_ptr<core::logging::base_logger> logger) {
   std::unique_lock lk { mtx_ };
   loggers_[name.data()] = std::move(logger);
 }
 
-void registry::set_default_logger(std::shared_ptr<core::logging::logger> logger) {
+void registry::set_default_logger(std::shared_ptr<core::logging::base_logger> logger) {
   std::unique_lock lk { mtx_ };
   default_logger_ = std::move(logger);
 }
 
-std::shared_ptr<core::logging::logger> registry::get_default_logger() const noexcept {
+std::shared_ptr<core::logging::base_logger> registry::get_default_logger() const noexcept {
   std::shared_lock lk { mtx_ };
   return default_logger_;
 }
 
-std::shared_ptr<core::logging::logger> registry::get(std::string_view name) const noexcept {
+std::shared_ptr<core::logging::base_logger> registry::get(std::string_view name) const noexcept {
   std::shared_lock lk { mtx_ };
 
   if (!loggers_.contains(name.data())) {
@@ -33,7 +33,7 @@ std::shared_ptr<core::logging::logger> registry::get(std::string_view name) cons
   return loggers_.at(name.data());
 }
 
-core::logging::logger* registry::get_default_logger_raw() const noexcept {
+core::logging::base_logger* registry::get_default_logger_raw() const noexcept {
   return default_logger_.get();
 }
 
