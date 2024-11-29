@@ -26,7 +26,7 @@ void application::run() {
 
     return resp;
   }).concurrency(4)
-    .listen_and_serve(8080);
+    .listen_and_serve("127.0.0.1", 8080);
   
   app::logging::release();
 }
