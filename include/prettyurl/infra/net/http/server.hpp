@@ -21,6 +21,12 @@ public:
 
   void listen_and_serve(const std::uint16_t port) override {
     listen_signals();
+
+    const auto endpoint = tcp::endpoint(net::ip::make_address_v4("0.0.0.0"), port);
+    
+    std::make_shared<listener>(io_ctx_, endpoint, [this](tcp::socket socket) {
+      start_session(std::move(socket));
+    })->accept();    
     
     run_thread_pool(threads_count_, [this] {
       const auto thread_id = std::hash<std::thread::id>{}(std::this_thread::get_id());
@@ -33,12 +39,6 @@ public:
       app::logging::get("file")->info("stop thread {:#x}", thread_id);
       app::logging::get("console")->info("stop thread {:#x}", thread_id);
     });
-    
-    const auto endpoint = tcp::endpoint(net::ip::make_address_v4("0.0.0.0"), port);
-    
-    std::make_shared<listener>(io_ctx_, endpoint, [this](tcp::socket socket) {
-      start_session(std::move(socket));
-    })->accept();
   }
 
   server& concurrency(const unsigned threads_count) noexcept {
