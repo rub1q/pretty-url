@@ -68,6 +68,8 @@ set(SOURCES
 
   src/infra/logging/loggers/console_logger.cpp
   src/infra/logging/loggers/file_logger.cpp  
+  src/infra/net/http/request.cpp
+  src/infra/net/http/response.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
