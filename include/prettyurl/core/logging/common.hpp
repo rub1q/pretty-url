@@ -63,22 +63,43 @@ enum elevel : std::uint8_t {
   std::transform(lvl.begin(), lvl.end(), lvl.begin(), 
                  [](unsigned char c) { return std::tolower(c); });
 
-  if (lvl == "trace") {
+  if (lvl == "trace" || lvl == "trc") {
     return elevel::trace;
-  } else if (lvl == "debug") {
+  } else if (lvl == "debug" || lvl == "dbg") {
     return elevel::debug;
-  } else if (lvl == "info") {
+  } else if (lvl == "info" || lvl == "inf") {
     return elevel::info;
-  } else if (lvl == "warn" || lvl == "warning") {
+  } else if (lvl == "warning" || lvl == "wrn" || lvl == "warn") {
     return elevel::warning;
-  } else if (lvl == "error") {
+  } else if (lvl == "error" || lvl == "err") {
     return elevel::error;
-  } else if (lvl == "fatal") {
+  } else if (lvl == "fatal" || lvl == "ftl") {
     return elevel::fatal;
   }
 
   return elevel::none;
 }
-
 } // namespace level
+
+class source_loc final {
+public:  
+  source_loc() = default;
+
+  static consteval source_loc current() noexcept {
+    source_loc loc;
+
+    loc.line_num_ = __LINE__;
+    loc.file_name_ = __FILE__;
+    loc.func_name_ = __FUNCTION__;
+
+    return loc;
+  }
+
+private:
+  int line_num_ { 0 };
+
+  const char* file_name_ { nullptr };
+  const char* func_name_ { nullptr };
+};
+
 } // namespace prettyurl::core::logging
