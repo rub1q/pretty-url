@@ -52,7 +52,8 @@ private:
 
   void on_read(sys::error_code ec, [[maybe_unused]] std::size_t bytes_read) {
     if (ec) {
-      return app::logging::error("http: an error occured while reading data (code: {}; message: {})", ec.value(), ec.message());
+      PU_LOG_ERR("http: an error occured while reading data (code: {}; message: {})", ec.value(), ec.message());
+      return;
     }
 
     handle_request(std::move(request_));
@@ -60,7 +61,8 @@ private:
 
   void on_write(bool close_socket, sys::error_code ec, [[maybe_unused]] std::size_t bytes_written) {
     if (ec) {
-      return app::logging::error("http: an error occured while writing data (code: {}; message: {})", ec.value(), ec.message());
+      PU_LOG_ERR("http: an error occured while writing data (code: {}; message: {})", ec.value(), ec.message());
+      return;
     }
     
     if (close_socket) {

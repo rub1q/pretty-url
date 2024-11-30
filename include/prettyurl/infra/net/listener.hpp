@@ -41,7 +41,8 @@ private:
 
   void on_accept(sys::error_code ec, tcp::socket socket) {
     if (ec) {
-      return app::logging::error("http: an error occured during accepting new connection (code: {}; message: {})", ec.value(), ec.message());
+      PU_LOG_ERR("http: an error occured during accepting new connection (code: {}; message: {})", ec.value(), ec.message());
+      return;
     }
 
     callback_(std::move(socket));
