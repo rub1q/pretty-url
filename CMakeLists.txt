@@ -64,6 +64,8 @@ set(SOURCES
   src/main.cpp
   src/app.cpp
 
+  src/core/logging/base_logger.cpp
+
   src/app/logging/details/registry.cpp
 
   src/infra/logging/loggers/console_logger.cpp
