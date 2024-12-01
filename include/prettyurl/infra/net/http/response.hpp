@@ -5,7 +5,7 @@
 
 namespace prettyurl::infra::net::http {
 
-class response final : public core::net::http::base_response<http_string_response> {
+class response final : public core::net::http::base_response {
 public:
   [[nodiscard]] core::net::http::status status_code() const final;
   [[nodiscard]] std::string_view header(std::string_view key) const final;
@@ -21,6 +21,17 @@ public:
   void version(const unsigned version) final;
   void prepare_payload() final;
   void clear() final;
+
+  const http_string_response& get_impl() const noexcept {
+    return resp_impl_;
+  }
+
+  http_string_response& get_impl() noexcept {
+    return resp_impl_;
+  }
+
+private:
+  http_string_response resp_impl_;
 };
 
 } // namespace prettyurl::infra::net::http
