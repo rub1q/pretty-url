@@ -2,8 +2,8 @@
 
 namespace prettyurl::infra::net::http {
 
-core::net::http::method::emethod request::method() const {
-  return static_cast<core::net::http::method::emethod>(req_impl_.method());
+core::net::http::emethod request::method() const {
+  return static_cast<core::net::http::emethod>(req_impl_.method());
 }
 
 std::string_view request::target() const {
@@ -26,7 +26,7 @@ unsigned request::version() const {
   return req_impl_.version();
 }
 
-void request::method(const core::net::http::method::emethod method) {
+void request::method(const core::net::http::emethod method) {
   req_impl_.method_string(core::net::http::method::to_string(method));
 }
 

@@ -2,8 +2,8 @@
 
 namespace prettyurl::infra::net::http {
 
-core::net::http::status response::status_code() const {
-  return static_cast<core::net::http::status>(resp_impl_.result_int());
+core::net::http::estatus response::status_code() const {
+  return static_cast<core::net::http::estatus>(resp_impl_.result_int());
 }
 
 std::string_view response::header(std::string_view key) const {
@@ -26,7 +26,7 @@ unsigned response::version() const {
   return resp_impl_.version();
 }
 
-void response::status_code(const core::net::http::status status_code) {
+void response::status_code(const core::net::http::estatus status_code) {
   resp_impl_.result(static_cast<int>(status_code));
 }
 

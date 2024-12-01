@@ -7,14 +7,14 @@ namespace prettyurl::infra::net::http {
 
 class request final : public core::net::http::base_request {
 public:
-  [[nodiscard]] core::net::http::method::emethod method() const final;
+  [[nodiscard]] core::net::http::emethod method() const final;
   [[nodiscard]] std::string_view target() const final;
   [[nodiscard]] std::string_view header(std::string_view key) const final;
   [[nodiscard]] std::string_view body() const final;
   [[nodiscard]] bool keep_alive() const final;
   [[nodiscard]] unsigned version() const final;
 
-  void method(const core::net::http::method::emethod method) final;
+  void method(const core::net::http::emethod method) final;
   void body(std::string_view body) final;
   void target(std::string_view target) final;
   void header(std::string_view key, std::string_view value) final;

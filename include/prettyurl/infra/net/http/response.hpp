@@ -7,14 +7,14 @@ namespace prettyurl::infra::net::http {
 
 class response final : public core::net::http::base_response {
 public:
-  [[nodiscard]] core::net::http::status status_code() const final;
+  [[nodiscard]] core::net::http::estatus status_code() const final;
   [[nodiscard]] std::string_view header(std::string_view key) const final;
   [[nodiscard]] std::string_view body() const final;
   [[nodiscard]] bool keep_alive() const final;
   [[nodiscard]] bool need_eof() const;
   [[nodiscard]] unsigned version() const final;
 
-  void status_code(const core::net::http::status status_code) final;
+  void status_code(const core::net::http::estatus status_code) final;
   void header(std::string_view key, std::string_view value) final;
   void body(std::string_view body) final; 
   void keep_alive(const bool keep) final; 
