@@ -60,6 +60,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif()
 endif()
 
+if (STD_FORMAT_SUPPORT EQUAL FALSE)
+  find_package(fmt REQUIRED)
+endif()
+
 set(SOURCES
   src/main.cpp
   src/app.cpp
@@ -79,7 +83,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE 
   "${CMAKE_SOURCE_DIR}/include"
 )
-
+ 
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC 
   Threads::Threads
   boost::boost
