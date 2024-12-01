@@ -5,7 +5,7 @@
 
 namespace prettyurl::infra::net::http {
 
-class request final : public core::net::http::base_request<http_string_request> {
+class request final : public core::net::http::base_request {
 public:
   [[nodiscard]] core::net::http::method::emethod method() const final;
   [[nodiscard]] std::string_view target() const final;
@@ -21,6 +21,17 @@ public:
   void keep_alive(const bool keep) final;
   void version(const unsigned version) final;
   void clear() final;
+
+  const http_string_request& get_impl() const noexcept {
+    return req_impl_;
+  }
+
+  http_string_request& get_impl() noexcept {
+    return req_impl_;
+  }
+
+private:
+  http_string_request req_impl_;
 };
 
 } // namespace prettyurl::infra::net::http
