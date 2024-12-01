@@ -4,7 +4,6 @@
 
 namespace prettyurl::core::net::http {
 
-template <typename ResponseT>
 class base_response {
 public:
   virtual ~base_response() = default;
@@ -23,25 +22,6 @@ public:
   virtual void version(const unsigned version) = 0;
   virtual void prepare_payload() = 0;
   virtual void clear() = 0;
-
-  const ResponseT& operator*() const noexcept {
-    return get();
-  }
-
-  ResponseT& operator*() noexcept {
-    return get();
-  }
-
-  const ResponseT& get() const noexcept {
-    return resp_impl_;
-  }
-
-  ResponseT& get() noexcept {
-    return resp_impl_;
-  }
-
-protected:
-  ResponseT resp_impl_;
 };
 
 } // namespace prettyurl::core::net::http
