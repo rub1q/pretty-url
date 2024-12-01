@@ -25,7 +25,7 @@ public:
 
       const auto endpoint = tcp::endpoint(net::ip::make_address(bindaddr), port);
       
-      std::make_shared<listener>(io_ctx_, endpoint, [this](tcp::socket socket) {
+      std::make_shared<listener>(io_ctx_, endpoint, [this](tcp::socket&& socket) {
         start_session(std::move(socket));
       })->accept();
 
@@ -70,20 +70,26 @@ public:
   }
 
 private:
-  void start_session(tcp::socket socket) {
-    std::make_shared<session<RequestHandler>>(std::move(socket), std::move(request_handler_))->start();
+  void start_session(tcp::socket&& socket) {
+    auto new_session = std::make_shared<session<RequestHandler>>(io_ctx_, std::move(socket), std::move(request_handler_));
+
+    // TODO: set timeout values from config
+    new_session->read_timeout(std::chrono::minutes(5));
+    new_session->write_timeout(std::chrono::minutes(5));
+    new_session->start();
   }
 
   void listen_signals() {
     signals_.async_wait([this](const sys::error_code& ec, const int signal_number) {
-      if (!ec) {
-        PU_LOG_INF("signal received {}", signal_number);
-        PU_LOG_INF_TO("console"_logger, "signal received {}", signal_number);
-        
-        stop();
-      } else {
-        PU_LOG_ERR("an error occured at listen_signals {}", ec.value());
+      if (ec) {
+        PU_LOG_ERR("an error occured at listen_signals() {}", ec.value());
+        return;
       }
+
+      PU_LOG_INF("signal received {}", signal_number);
+      PU_LOG_INF_TO("console"_logger, "signal received {}", signal_number);
+      
+      stop();
     });
   }
 
