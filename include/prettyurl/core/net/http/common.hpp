@@ -6,126 +6,36 @@
 
 namespace prettyurl::core::net::http {
 
-struct method final {
-  method() = delete;
+// emethod underlying type
+using emethod_ut = std::uint16_t;
+
+enum class emethod : emethod_ut {
+  unknown,
+  head,
+  get,
+  post,
+  put,
+  delete_,
+  patch
+};
+
+enum class econtent_type : std::uint8_t {
+  text_plain,
+  text_html,
+  text_css,
+  text_javascript,
   
-  enum emethod : std::uint8_t {
-    unknown,
-    head,
-    get,
-    post,
-    put,
-    delete_,
-    patch
-  };
-
-  [[nodiscard]] static constexpr emethod from_string(std::string_view method_str) {
-    if (method_str.empty()) {
-      return emethod::unknown;
-    }
-
-    using namespace std::literals;
-
-    std::string method(method_str);
-
-    std::transform(method.begin(), method.end(), method.begin(), 
-                  [](unsigned char c) { return std::tolower(c); });
-
-    if (method == "head"sv) {
-      return emethod::head;
-    } else if (method == "get"sv) {
-      return emethod::get;
-    } else if (method == "post"sv) {
-      return emethod::post;
-    } else if (method == "put"sv) {
-      return emethod::put;
-    } else if (method == "delete"sv) {
-      return emethod::delete_;
-    } else if (method == "patch"sv) {
-      return emethod::patch;
-    }
-
-    return emethod::unknown;
-  }
-
-  [[nodiscard]] static constexpr const char* to_string(const emethod method) {
-    switch (method) {
-      case emethod::head :
-        return "HEAD";
-      case emethod::get :
-        return "GET";
-      case emethod::post :
-        return "POST";
-      case emethod::put :
-        return "PUT";
-      case emethod::delete_ :
-        return "DELETE";
-      case emethod::patch :
-        return "PATCH";
-
-      default : 
-        return "UNKNOWN";
-    }
-  }
+  application_json,
+  application_xml,
+  application_soap_xml,
+  application_octet_stream
 };
 
-struct content_type final {
-  content_type() = delete;
-
-  enum econtent_type : std::uint8_t {
-    text_plain,
-    text_html,
-    text_css,
-    text_javascript,
-    
-    application_json,
-    application_xml,
-    application_soap_xml,
-    application_octet_stream
-  };
-
-  [[nodiscard]] static constexpr std::string to_string(const econtent_type ct) noexcept {
-    switch (ct) {
-      case econtent_type::text_plain :
-        return "text/plain";
-      case econtent_type::text_html :
-        return "text/html";
-      case econtent_type::text_css :
-        return "text/css";
-      case econtent_type::text_javascript :
-        return "text/javascript";
-      case econtent_type::application_json :
-        return "application/json";
-      case econtent_type::application_xml :
-        return "application/xml";
-      case econtent_type::application_soap_xml :
-        return "application/soap+xml";
-      case econtent_type::application_octet_stream :
-        return "application/octet-stream";
-
-      default : return "";
-    }
-  }
+enum class echarset : std::uint8_t {
+  utf8
 };
 
-struct charset final {
-  charset() = delete;
-
-  enum echarset : std::uint8_t {
-    utf8
-  };
-
-  [[nodiscard]] static constexpr std::string to_string(const echarset charset) noexcept {
-    switch (charset) {
-      case echarset::utf8 :
-        return "UTF-8";
-
-      default : return "";
-    }
-  }
-};
-
-enum class status : std::uint16_t {
+enum class estatus : std::uint16_t {
   unknown = 0,
 
   continue_                           = 100,
@@ -197,12 +107,112 @@ enum class status : std::uint16_t {
   network_connect_timeout_error       = 599
 };
 
+struct method final {
+  method() = delete;
+
+  [[nodiscard]] static constexpr emethod from_string(std::string_view method_str) {
+    if (method_str.empty()) {
+      return emethod::unknown;
+    }
+
+    using namespace std::literals;
+
+    std::string method(method_str);
+
+    std::transform(method.begin(), method.end(), method.begin(), 
+                  [](unsigned char c) { return std::tolower(c); });
+
+    if (method == "head"sv) {
+      return emethod::head;
+    } else if (method == "get"sv) {
+      return emethod::get;
+    } else if (method == "post"sv) {
+      return emethod::post;
+    } else if (method == "put"sv) {
+      return emethod::put;
+    } else if (method == "delete"sv) {
+      return emethod::delete_;
+    } else if (method == "patch"sv) {
+      return emethod::patch;
+    }
+
+    return emethod::unknown;
+  }
+
+  [[nodiscard]] static constexpr std::string to_string(const emethod method) {
+    switch (method) {
+      case emethod::head :
+        return "HEAD";
+      case emethod::get :
+        return "GET";
+      case emethod::post :
+        return "POST";
+      case emethod::put :
+        return "PUT";
+      case emethod::delete_ :
+        return "DELETE";
+      case emethod::patch :
+        return "PATCH";
+
+      default : 
+        return "UNKNOWN";
+    }
+  }
+};
+
+struct content_type final {
+  content_type() = delete;
+
+  [[nodiscard]] static constexpr std::string to_string(const econtent_type ct) noexcept {
+    switch (ct) {
+      case econtent_type::text_plain :
+        return "text/plain";
+      case econtent_type::text_html :
+        return "text/html";
+      case econtent_type::text_css :
+        return "text/css";
+      case econtent_type::text_javascript :
+        return "text/javascript";
+      case econtent_type::application_json :
+        return "application/json";
+      case econtent_type::application_xml :
+        return "application/xml";
+      case econtent_type::application_soap_xml :
+        return "application/soap+xml";
+      case econtent_type::application_octet_stream :
+        return "application/octet-stream";
+
+      default : return "";
+    }
+  }
+};
+
+struct charset final {
+  charset() = delete;
+
+  [[nodiscard]] static constexpr std::string to_string(const echarset charset) noexcept {
+    switch (charset) {
+      case echarset::utf8 :
+        return "UTF-8";
+
+      default : return "";
+    }
+  }
+};
+
 namespace helpers {
 
-[[nodiscard]] constexpr inline std::string make_content_type_with_charset(const content_type::econtent_type ct, const charset::echarset charset) noexcept {
+[[nodiscard]] constexpr inline std::string make_content_type_with_charset(const econtent_type ct, const echarset charset) noexcept {
   return content_type::to_string(ct).append("; charset=").append(charset::to_string(charset));
 }
 
 } // namespace helpers
-
 } // namespace prettyurl::core::net::http
+
+inline constexpr prettyurl::core::net::http::emethod
+operator|(prettyurl::core::net::http::emethod m1, prettyurl::core::net::http::emethod m2) {
+  const auto val_1 = (1 << static_cast<prettyurl::core::net::http::emethod_ut>(m1));
+  const auto val_2 = (1 << static_cast<prettyurl::core::net::http::emethod_ut>(m2));
+  
+  return static_cast<prettyurl::core::net::http::emethod>(val_1 | val_2);
+}
