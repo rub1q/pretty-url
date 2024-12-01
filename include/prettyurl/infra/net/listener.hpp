@@ -32,14 +32,14 @@ public:
 
 private:
   void do_accept() {
-    acceptor_.async_accept(std::bind_front(&listener::on_accept, this->shared_from_this()));
+    acceptor_.async_accept(std::bind_front(&listener::on_accept, self_ptr()));
   }
 
   void do_close() {
     acceptor_.close();
   }
 
-  void on_accept(sys::error_code ec, tcp::socket socket) {
+  void on_accept(sys::error_code ec, tcp::socket&& socket) {
     if (ec) {
       PU_LOG_ERR("http: an error occured during accepting new connection (code: {}; message: {})", ec.value(), ec.message());
       return;
@@ -47,6 +47,10 @@ private:
 
     callback_(std::move(socket));
     accept();  
+  }
+
+  std::shared_ptr<listener> self_ptr() {
+    return this->shared_from_this();
   }
 
 private:
