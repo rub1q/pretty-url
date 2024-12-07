@@ -3,7 +3,7 @@
 namespace prettyurl::infra::net::http {
 
 core::net::http::emethod request::method() const {
-  return static_cast<core::net::http::emethod>(req_impl_.method());
+  return core::net::http::method::from_string(req_impl_.method_string());
 }
 
 std::string_view request::target() const {
