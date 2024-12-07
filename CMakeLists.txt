@@ -71,6 +71,8 @@ set(SOURCES
   src/core/logging/base_logger.cpp
 
   src/app/logging/details/registry.cpp
+  src/app/handlers/redirect_handler.cpp
+  src/app/handlers/url_shortener_handler.cpp
 
   src/infra/logging/loggers/console_logger.cpp
   src/infra/logging/loggers/file_logger.cpp  
