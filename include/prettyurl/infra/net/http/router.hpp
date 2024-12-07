@@ -13,7 +13,7 @@ public:
 
   [[nodiscard]] response operator()(request&& req) final;
 
-  void add_route(std::string_view path, const core::net::http::emethod methods, route::RouteHandlerFunc::HandlerFunc handler);
+  void add_route(std::string_view path, const core::net::http::emethod methods, route::handler_func::func_type handler);
 
 private:
   [[nodiscard]] response not_found(const unsigned version, bool keep_alive) const;

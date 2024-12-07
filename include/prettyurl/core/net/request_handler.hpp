@@ -15,9 +15,9 @@ public:
 template <typename Request, typename Response>
 class request_handler_func final : public request_handler<Request, Response> {
 public:
-  using HandlerFunc = std::function<Response(Request&&)>;
+  using func_type = std::function<Response(Request&&)>;
 
-  request_handler_func(HandlerFunc handler)
+  request_handler_func(func_type handler)
     : handler_(std::move(handler)) {
   }
 
@@ -32,7 +32,7 @@ public:
   }
 
 private:
-  HandlerFunc handler_;
+  func_type handler_;
 };
 
 } // namespace prettyurl::core::net

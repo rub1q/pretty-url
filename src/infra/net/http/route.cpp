@@ -3,11 +3,11 @@
 namespace prettyurl::infra::net::http {
 
 route& route::methods(const core::net::http::emethod method) noexcept {
-  methods_ |= static_cast<core::net::http::emethod_ut>(method);
+  methods_ |= static_cast<std::uint32_t>(method);
   return *this;
 }
 
-route& route::handler(RouteHandlerFunc handler) noexcept {
+route& route::handler(handler_func handler) noexcept {
   handler_ = std::move(handler);
   return *this;
 }

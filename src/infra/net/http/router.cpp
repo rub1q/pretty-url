@@ -14,8 +14,6 @@ response router::not_found(const unsigned version, bool keep_alive) const {
     resp.prepare_payload();
     resp.keep_alive(keep_alive);
 
-    // TODO: change string literal header to enum constant
-
     resp.header("Content-Type"sv, 
       core::net::http::helpers::make_content_type_with_charset(
         core::net::http::econtent_type::application_json, 
@@ -38,8 +36,6 @@ response router::method_not_allowed(const unsigned version, bool keep_alive) con
     resp.prepare_payload();
     resp.keep_alive(keep_alive);
 
-    // TODO: change string literal header to enum constant
-
     resp.header("Content-Type"sv, 
       core::net::http::helpers::make_content_type_with_charset(
         core::net::http::econtent_type::application_json, 
@@ -52,7 +48,7 @@ response router::method_not_allowed(const unsigned version, bool keep_alive) con
   return response_func(version, keep_alive);
 }
 
-void router::add_route(std::string_view path, const core::net::http::emethod methods, route::RouteHandlerFunc::HandlerFunc handler) {
+void router::add_route(std::string_view path, const core::net::http::emethod methods, route::handler_func::func_type handler) {
   routes_.emplace(path, std::make_shared<route>(methods, std::move(handler)));
 }
 
