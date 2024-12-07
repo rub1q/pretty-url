@@ -73,6 +73,7 @@ set(SOURCES
   src/app/logging/details/registry.cpp
   src/app/handlers/redirect_handler.cpp
   src/app/handlers/url_shortener_handler.cpp
+  src/app/services/url_shortener_service.cpp
 
   src/infra/logging/loggers/console_logger.cpp
   src/infra/logging/loggers/file_logger.cpp  
@@ -80,6 +81,7 @@ set(SOURCES
   src/infra/net/http/response.cpp
   src/infra/net/http/route.cpp
   src/infra/net/http/router.cpp
+  src/infra/db/repository/pg_url_repository_impl.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
