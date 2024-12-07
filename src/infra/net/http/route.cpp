@@ -13,7 +13,7 @@ route& route::handler(handler_func handler) noexcept {
 }
 
 bool route::is_allowed_method(const core::net::http::emethod method) const noexcept {
-  return methods_ & static_cast<core::net::http::emethod_ut>(method);
+  return methods_ & (1 << static_cast<std::uint32_t>(method));
 }
 
 bool route::is_allowed_method(std::string_view method) const noexcept {
