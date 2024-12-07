@@ -5,6 +5,8 @@
 #include "prettyurl/infra/logging/loggers/file_logger.hpp"
 #include "prettyurl/infra/net/http/server.hpp"
 #include "prettyurl/infra/net/http/router.hpp"
+#include "prettyurl/app/handlers/redirect_handler.hpp"
+#include "prettyurl/app/handlers/url_shortener_handler.hpp"
 
 namespace prettyurl {
 
@@ -22,15 +24,15 @@ void application::run() {
 
   infra::net::http::router router;
 
-  router.add_route("/hello"sv, core::net::http::emethod::get | core::net::http::emethod::post, [](auto&&) {
-    infra::net::http::response resp;
-    
-    resp.status_code(core::net::http::estatus::ok);
-    resp.body("hello!\n");
-    resp.prepare_payload();
+  router.add_route("api/v1/"sv, 
+    core::net::http::emethod::get | core::net::http::emethod::post, 
+    app::handlers::redirect_handler{}
+  );
 
-    return resp;
-  });
+  router.add_route("api/v1/shorten"sv, 
+    core::net::http::emethod::post,
+    app::handlers::url_shortener_handler{}
+  );
 
   infra::net::http::server(std::move(router))
     .concurrency(4)
