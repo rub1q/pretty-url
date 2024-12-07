@@ -71,7 +71,7 @@ public:
 
 private:
   void start_session(tcp::socket&& socket) {
-    auto new_session = std::make_shared<session<RequestHandler>>(io_ctx_, std::move(socket), std::move(request_handler_));
+    auto new_session = std::make_shared<session<RequestHandler>>(io_ctx_, std::move(socket), request_handler_);
 
     // TODO: set timeout values from config
     new_session->read_timeout(std::chrono::minutes(5));

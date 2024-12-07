@@ -16,10 +16,10 @@ using namespace std::literals;
 template <typename RequestHandler>
 class session final : public core::net::http::base_session<request, response>, public std::enable_shared_from_this<session<RequestHandler>> {
 public:
-  constexpr explicit session(asio::io_context& io_ctx, tcp::socket&& socket, RequestHandler&& handler)
+  constexpr explicit session(asio::io_context& io_ctx, tcp::socket&& socket, const RequestHandler& handler)
     : io_ctx_(io_ctx)
     , socket_(std::move(socket))
-    , request_handler_(std::forward<decltype(handler)>(handler)) {
+    , request_handler_(handler) {
   }
 
   void start() final {
