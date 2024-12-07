@@ -6,9 +6,9 @@
 
 namespace prettyurl::app::handlers {
 
-class redirect_handler : public core::net::request_handler<infra::net::http::request, infra::net::http::response> {
+class redirect_handler final : public core::net::request_handler<infra::net::http::request, infra::net::http::response> {
 public:
-  infra::net::http::response operator()(infra::net::http::request&& req);
+  infra::net::http::response operator()(infra::net::http::request&& req) final;
 };
 
 } // namespace app::handlers 
