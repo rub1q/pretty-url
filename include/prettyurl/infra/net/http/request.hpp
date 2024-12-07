@@ -7,6 +7,14 @@ namespace prettyurl::infra::net::http {
 
 class request final : public core::net::http::base_request {
 public:
+  request() = default;
+
+  request(const request&) = default;
+  request(request&&) = default;
+
+  request& operator=(const request&) = default;
+  request& operator=(request&&) = default;
+
   [[nodiscard]] core::net::http::emethod method() const final;
   [[nodiscard]] std::string_view target() const final;
   [[nodiscard]] std::string_view header(std::string_view key) const final;

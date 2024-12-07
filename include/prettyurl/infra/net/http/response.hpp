@@ -7,6 +7,18 @@ namespace prettyurl::infra::net::http {
 
 class response final : public core::net::http::base_response {
 public:
+  response() = default;
+
+  explicit response(const core::net::http::estatus status) {
+    status_code(status); 
+  }
+
+  response(const response&) = default;
+  response(response&&) = default;
+
+  response& operator=(const response&) = default;
+  response& operator=(response&&) = default; 
+  
   [[nodiscard]] core::net::http::estatus status_code() const final;
   [[nodiscard]] std::string_view header(std::string_view key) const final;
   [[nodiscard]] std::string_view body() const final;
