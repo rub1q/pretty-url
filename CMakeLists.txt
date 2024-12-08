@@ -74,6 +74,7 @@ set(SOURCES
   src/app/handlers/redirect_handler.cpp
   src/app/handlers/url_shortener_handler.cpp
   src/app/services/url_shortener_service.cpp
+  src/app/services/redirect_url_service.cpp
 
   src/infra/logging/loggers/console_logger.cpp
   src/infra/logging/loggers/file_logger.cpp  
