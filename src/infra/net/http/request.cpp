@@ -52,6 +52,7 @@ void request::version(const unsigned version) {
 
 void request::clear() {
   req_impl_.clear();
+  req_impl_ = {};
 }
 
 } // namespace prettyurl::infra::net::http
