@@ -3,12 +3,20 @@
 #include "prettyurl/core/net/request_handler.hpp"
 #include "prettyurl/infra/net/http/request.hpp"
 #include "prettyurl/infra/net/http/response.hpp"
+#include "prettyurl/app/services/redirect_url_service.hpp"
 
 namespace prettyurl::app::handlers {
 
 class redirect_handler final : public core::net::request_handler<infra::net::http::request, infra::net::http::response> {
 public:
+  explicit redirect_handler(std::shared_ptr<services::redirect_url_service> service)
+    : service_(std::move(service)) {
+  }
+
   infra::net::http::response operator()(infra::net::http::request&& req) final;
+
+private:
+  std::shared_ptr<services::redirect_url_service> service_;
 };
 
 } // namespace app::handlers 
