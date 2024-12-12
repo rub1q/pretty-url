@@ -7,6 +7,9 @@
 #include "prettyurl/infra/net/http/router.hpp"
 #include "prettyurl/app/handlers/redirect_handler.hpp"
 #include "prettyurl/app/handlers/url_shortener_handler.hpp"
+#include "prettyurl/app/services/url_shortener_service.hpp"
+#include "prettyurl/app/services/redirect_url_service.hpp"
+#include "prettyurl/infra/db/repository/pg_url_repository_impl.hpp"
 
 namespace prettyurl {
 
@@ -24,14 +27,19 @@ void application::run() {
 
   infra::net::http::router router;
 
-  router.add_route("api/v1/"sv, 
+  auto url_repo = std::make_shared<infra::db::repository::pg_url_repository_impl>(); 
+
+  auto shorten_service = std::make_shared<app::services::url_shortener_service>(url_repo);
+  auto redirect_service = std::make_shared<app::services::redirect_url_service>(url_repo);
+
+  router.add_route("/api/v1/"sv, 
     core::net::http::emethod::get | core::net::http::emethod::post, 
-    app::handlers::redirect_handler{}
+    app::handlers::redirect_handler{ std::move(redirect_service) }
   );
 
-  router.add_route("api/v1/shorten"sv, 
+  router.add_route("/api/v1/shorten"sv, 
     core::net::http::emethod::post,
-    app::handlers::url_shortener_handler{}
+    app::handlers::url_shortener_handler{ std::move(shorten_service) }
   );
 
   infra::net::http::server(std::move(router))
