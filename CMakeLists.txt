@@ -49,18 +49,18 @@ if (Boost_FOUND)
   add_compile_definitions(BOOST_BEAST_USE_STD_STRING_VIEW)
 endif()
 
-set(STD_FORMAT_SUPPORT TRUE)
+set(STD_FORMAT_SUPPORT ON)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if (CMAKE_CXX_COMPILER_MAJOR_VERSION VERSION_LESS 13)
     message(STATUS "Compiler major version less than 13. fmt lib will be using")  
-    set(STD_FORMAT_SUPPORT FALSE)
+    set(STD_FORMAT_SUPPORT OFF)
   else()
     add_compile_definitions(HAS_STD_FORMAT_SUPPORT)
   endif()
 endif()
 
-if (STD_FORMAT_SUPPORT EQUAL FALSE)
+if (NOT ${STD_FORMAT_SUPPORT})
   find_package(fmt REQUIRED)
 endif()
 
@@ -98,6 +98,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
   rapidjson
 )
 
-if (STD_FORMAT_SUPPORT EQUAL FALSE)
+if (NOT ${STD_FORMAT_SUPPORT})
   target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC fmt::fmt)
 endif()
