@@ -7,13 +7,8 @@ route& route::methods(const core::net::http::emethod method) noexcept {
   return *this;
 }
 
-route& route::handler(handler_func handler) noexcept {
-  handler_ = std::move(handler);
-  return *this;
-}
-
 bool route::is_allowed_method(const core::net::http::emethod method) const noexcept {
-  return methods_ & (1 << static_cast<std::uint32_t>(method));
+  return methods_ & (static_cast<std::uint32_t>(method));
 }
 
 bool route::is_allowed_method(std::string_view method) const noexcept {
@@ -22,7 +17,11 @@ bool route::is_allowed_method(std::string_view method) const noexcept {
 }
 
 response route::handle(request&& req) {
-  return handler_(std::move(req));
+  if (!handler_) {
+    throw std::runtime_error("route handler is null");
+  }
+  
+  return (*handler_)(std::move(req));
 }
 
 } // namespace prettyurl::infra::net::http
