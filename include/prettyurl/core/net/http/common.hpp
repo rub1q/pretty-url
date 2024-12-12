@@ -7,13 +7,13 @@
 namespace prettyurl::core::net::http {
 
 enum class emethod : std::uint32_t {
-  unknown,
-  delete_,
-  get,
-  head, 
-  post,
-  put,
-  patch
+  unknown = (1 << 0),
+  delete_ = (1 << 1),
+  get     = (1 << 2),
+  head    = (1 << 3), 
+  post    = (1 << 4),
+  put     = (1 << 5),
+  patch   = (1 << 6)
 };
 
 enum class econtent_type : std::uint8_t {
@@ -208,8 +208,8 @@ namespace helpers {
 
 inline constexpr prettyurl::core::net::http::emethod
 operator|(prettyurl::core::net::http::emethod m1, prettyurl::core::net::http::emethod m2) {
-  const auto val_1 = (1 << static_cast<std::uint32_t>(m1));
-  const auto val_2 = (1 << static_cast<std::uint32_t>(m2));
+  const auto val_1 = (static_cast<std::uint32_t>(m1));
+  const auto val_2 = (static_cast<std::uint32_t>(m2));
   
   return static_cast<prettyurl::core::net::http::emethod>(val_1 | val_2);
 }
