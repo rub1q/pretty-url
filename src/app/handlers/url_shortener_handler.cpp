@@ -1,5 +1,6 @@
 #include "prettyurl/app/handlers/url_shortener_handler.hpp"
 #include "prettyurl/app/logging/log-inl.hpp"
+#include "prettyurl/infra/net/http/responders.hpp"
 
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
@@ -14,7 +15,7 @@ infra::net::http::response url_shortener_handler::operator()(infra::net::http::r
     root.Parse(req.body().data());
 
     if (root.HasParseError() || !root.HasMember("longUrl") || !root["longUrl"].IsString()) {
-      // TODO: return bad request
+      return infra::net::http::responders::bad_request(req.version(), req.keep_alive(), R"("message": "Invalid Request Body")");
     }
 
     const auto long_url = root["longUrl"].GetString();
@@ -50,10 +51,10 @@ infra::net::http::response url_shortener_handler::operator()(infra::net::http::r
 
   } catch (const std::exception& e) {
     PU_LOG_ERR("an error occured while processing url shorten ({})", e.what());
-    // TODO: return internal server error
+    return infra::net::http::responders::internal_server_error(req.version(), req.keep_alive());
   } catch (...) {
     PU_LOG_ERR("an unknown error occured while processing url shorten");
-    // TODO: return internal server error
+    return infra::net::http::responders::internal_server_error(req.version(), req.keep_alive());
   }
 }
 
