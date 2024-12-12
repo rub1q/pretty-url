@@ -13,7 +13,10 @@ public:
 
   [[nodiscard]] response operator()(request&& req) final;
 
-  void add_route(std::string_view path, const core::net::http::emethod methods, route::handler_func::func_type handler);
+  template <typename Handler>
+  void add_route(std::string_view path, const core::net::http::emethod methods, Handler&& handler) {
+    routes_.emplace(path, std::make_shared<route>(methods, std::forward<decltype(handler)>(handler)));
+  }
 
 private:
   [[nodiscard]] response not_found(const unsigned version, bool keep_alive) const;
