@@ -18,6 +18,8 @@ public:
     routes_.emplace(path, std::make_shared<route>(methods, std::forward<decltype(handler)>(handler)));
   }
 
+  [[nodiscard]] std::optional<std::reference_wrapper<const route>> get(std::string_view route_path) const;
+
 private:
   [[nodiscard]] response not_found(const unsigned version, bool keep_alive) const;
   [[nodiscard]] response method_not_allowed(const unsigned version, bool keep_alive) const;
