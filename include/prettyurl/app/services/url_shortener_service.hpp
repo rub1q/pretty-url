@@ -1,6 +1,8 @@
 #pragma once
 
 #include "prettyurl/core/repositories/url_repository.hpp"
+#include "prettyurl/core/encoding/base_encoder.hpp"
+#include "prettyurl/core/id/base_id_generator.hpp"
 
 #include <memory>
 
@@ -8,8 +10,12 @@ namespace prettyurl::app::services {
 
 class url_shortener_service final {
 public:
-  explicit url_shortener_service(std::shared_ptr<core::repositories::url_repository> repo)
-    : repo_(std::move(repo)) {
+  explicit url_shortener_service(std::shared_ptr<core::repositories::url_repository> repo, 
+    std::unique_ptr<core::encoding::base_encoder> encoder,
+    std::unique_ptr<core::id::base_id_generator> id_generator)
+    : repo_(std::move(repo))
+    , encoder_(std::move(encoder))
+    , id_generator_(std::move(id_generator)) {
   }
   
   [[nodiscard]] std::string shorten(std::string_view src_url);
@@ -17,6 +23,8 @@ public:
 
 private:
   std::shared_ptr<core::repositories::url_repository> repo_;
+  std::unique_ptr<core::encoding::base_encoder> encoder_;
+  std::unique_ptr<core::id::base_id_generator> id_generator_;
 };
 
 } // namespace prettyurl::app::services
