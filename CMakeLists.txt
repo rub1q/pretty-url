@@ -44,6 +44,7 @@ find_package(Threads REQUIRED)
 find_package(RapidJSON REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(Boost 1.78.0 EXACT REQUIRED)
+find_package(libpqxx REQUIRED)
 
 if (Boost_FOUND)
   add_compile_definitions(BOOST_BEAST_USE_STD_STRING_VIEW)
@@ -99,6 +100,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
   boost::boost
   spdlog::spdlog
   rapidjson
+  libpqxx::pqxx
 )
 
 if (NOT ${STD_FORMAT_SUPPORT})
