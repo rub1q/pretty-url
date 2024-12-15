@@ -4,6 +4,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <optional>
 
 namespace prettyurl::infra::net::http {
 
