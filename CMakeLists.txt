@@ -69,6 +69,8 @@ set(SOURCES
   src/app.cpp
 
   src/core/logging/base_logger.cpp
+  src/core/encoding/base62_encoder.cpp
+  src/core/utility/url_validator.cpp
 
   src/app/logging/details/registry.cpp
   src/app/handlers/redirect_handler.cpp
@@ -83,6 +85,7 @@ set(SOURCES
   src/infra/net/http/route.cpp
   src/infra/net/http/router.cpp
   src/infra/db/repository/pg_url_repository_impl.cpp
+  src/infra/db/auto_inc_id_generator.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
