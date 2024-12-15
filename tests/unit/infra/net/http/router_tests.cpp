@@ -11,19 +11,17 @@ SCENARIO("build new router") {
     return resp;
   });
 
-  const auto route = router.get("/route1");
-
-  REQUIRE(route.has_value());
-  REQUIRE(route.value().get().is_allowed_method(core::net::http::emethod::get));
-
-  REQUIRE_FALSE(router.get("/abc").has_value());
-
   infra::net::http::request req;
 
   req.method(core::net::http::emethod::get);
   req.target("/route1");
 
   WHEN("route found") {
+    const auto route = router.get("/route1");
+    
+    REQUIRE(route.has_value());
+    REQUIRE(route.value().get().is_allowed_method(core::net::http::emethod::get));    
+    
     THEN("return ok") {
       REQUIRE(router(std::move(req)).status_code() == core::net::http::estatus::ok);
     }
@@ -32,6 +30,8 @@ SCENARIO("build new router") {
   req.target("/abc");
 
   WHEN("route not found") {
+    REQUIRE_FALSE(router.get("/abc").has_value());    
+    
     THEN("return not found") {
       REQUIRE(router(std::move(req)).status_code() == core::net::http::estatus::not_found);
     }
@@ -45,4 +45,13 @@ SCENARIO("build new router") {
       REQUIRE(router(std::move(req)).status_code() == core::net::http::estatus::method_not_allowed);
     }
   }
+}
+
+SCENARIO("empty route path") {
+  infra::net::http::router router;
+
+  REQUIRE_THROWS(router.add_route("", core::net::http::emethod::get, [](auto&& req) {
+    infra::net::http::response resp { core::net::http::estatus::ok };
+    return resp;
+  }));  
 }
