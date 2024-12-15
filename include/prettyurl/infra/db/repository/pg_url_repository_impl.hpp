@@ -5,7 +5,10 @@
 namespace prettyurl::infra::db::repository {
 
 struct pg_url_repository_impl final : public core::repositories::url_repository {
+  [[nodiscard]] std::uint64_t get_last_id() final;
+    
   [[nodiscard]] std::optional<std::string> get_long_url(std::string_view short_url) final;
+  [[nodiscard]] std::optional<std::string> get_short_url(std::string_view long_url) final;
   
   void add_short_url(std::string_view short_url, std::string_view long_url) final;  
 };
