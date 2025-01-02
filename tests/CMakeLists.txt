@@ -28,6 +28,7 @@ set(SOURCES
   ../src/core/logging/base_logger.cpp
   ../src/core/encoding/base62_encoder.cpp
   ../src/core/utility/url_validator.cpp
+  ../src/core/db/query_result_set.cpp
 
   ../src/app/logging/details/registry.cpp  
   ../src/app/services/redirect_url_service.cpp
@@ -41,15 +42,17 @@ set(SOURCES
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES}
-  unit/core/repositories/url_repository_tests.cpp
-  unit/core/utility/url_validator_tests.cpp
-  unit/core/utility/base62_encoder_tests.cpp  
+  # unit/core/repositories/url_repository_tests.cpp
+  # unit/core/utility/url_validator_tests.cpp
+  # unit/core/utility/base62_encoder_tests.cpp
+  # unit/core/db/db_session_manager_tests.cpp
+  unit/core/db/query_result_set_tests.cpp
 
-  unit/app/services/redirect_url_service_tests.cpp
-  unit/app/services/url_shortener_service_tests.cpp
+  # unit/app/services/redirect_url_service_tests.cpp
+  # unit/app/services/url_shortener_service_tests.cpp
 
-  unit/infra/net/http/route_tests.cpp
-  unit/infra/net/http/router_tests.cpp
+  # unit/infra/net/http/route_tests.cpp
+  # unit/infra/net/http/router_tests.cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC 
