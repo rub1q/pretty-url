@@ -52,8 +52,8 @@ std::optional<std::reference_wrapper<const route>> router::get(std::string_view 
 
 response router::operator()(request&& req) {
   try {
-    const auto route_it = routes_.find(req.target().data());
-    
+    const auto route_it = routes_.find(std::string(req.target()));
+
     if (route_it == routes_.cend()) { // TODO
       return not_found(req.version(), req.keep_alive());
     }
