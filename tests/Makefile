@@ -18,7 +18,7 @@ build:
 	cd ./build && cmake --build .
 
 execute:
-	./build/${APP_NAME}
+	./build/${APP_NAME} --verbosity high --invisibles --durations yes
 
 run: build execute
 
