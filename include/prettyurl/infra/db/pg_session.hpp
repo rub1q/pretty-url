@@ -20,6 +20,7 @@ public:
 
   explicit pg_session(std::string_view conn_string)
     : conn_string_(std::move(conn_string)) {
+    connect();
   }
 
   [[nodiscard]] bool is_connected() const final;
