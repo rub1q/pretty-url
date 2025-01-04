@@ -1,0 +1,18 @@
+{
+  "server": {
+    "thread_pool_size": 4,
+    "ip": "127.0.0.1",
+    "port": 8080,
+    "read_timeout_sec": 10,
+    "write_timeout_sec": 10
+  },
+  "logging": {
+    "path": "/var/log/pretty-url/app.log",
+    "level": "debug"
+  },
+  "db": {
+    "ip": "127.0.0.1",
+    "port": 5432,
+    "connect_timeout_sec": 10
+  }
+}
