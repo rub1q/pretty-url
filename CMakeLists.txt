@@ -79,9 +79,10 @@ set(SOURCES
   src/app/handlers/url_shortener_handler.cpp
   src/app/services/url_shortener_service.cpp
   src/app/services/redirect_url_service.cpp
+  src/app/cli/cli_parser.cpp
 
   src/infra/logging/loggers/console_logger.cpp
-  src/infra/logging/loggers/file_logger.cpp  
+  src/infra/logging/loggers/file_logger.cpp
   src/infra/net/http/request.cpp
   src/infra/net/http/response.cpp
   src/infra/net/http/route.cpp
@@ -89,6 +90,7 @@ set(SOURCES
   src/infra/db/repository/pg_url_repository_impl.cpp
   src/infra/db/auto_inc_id_generator.cpp
   src/infra/db/pg_session.cpp
+  src/infra/config/json_config_parser.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
