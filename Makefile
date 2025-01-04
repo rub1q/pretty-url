@@ -23,7 +23,7 @@ build:
 	cd ./build && cmake --build .
 
 execute:
-	./bin/${BUILD_TYPE}/${APP_NAME} ${CFG_PATH}
+	./bin/${BUILD_TYPE}/${APP_NAME} --config ${CFG_PATH}
 
 run: build execute
 	
