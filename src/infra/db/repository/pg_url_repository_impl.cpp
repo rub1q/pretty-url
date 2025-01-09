@@ -50,21 +50,14 @@ void pg_url_repository_impl::add_short_url(std::string_view short_url, std::stri
   auto session = dbsm_.get_session(10s);
 
   static constinit auto sql = "insert into url_mapping(short_url, long_url) values($1, $2)";
-  
-  try {
-    session->begin_transaction();
-    session->execute_query(sql, short_url, long_url);
-    session->commit_transaction();
-  } catch (const std::exception& e) {
-    session->rollback_transaction();
-  }
+  session->execute_query_with_params(sql, short_url, long_url);
 }
 
 std::uint64_t pg_url_repository_impl::get_last_id() {
   auto session = dbsm_.get_session(10s);
 
-  static constinit auto sql = "select coalesce(max(id), currval('custom_url_id_seq'::regclass))"
-                              " as id from url_mapping";
+  static constinit auto sql = "select coalesce(max(id), nextval('custom_url_id_seq'::regclass))"
+                              " as id from url_mapping for read only";
 
   const auto result = session->execute_query(sql);
 
