@@ -12,7 +12,8 @@ public:
   virtual ~base_db_session() = default;
 
   [[nodiscard]] virtual bool is_connected() const = 0;
-  [[nodiscard]] virtual std::optional<query_result_set> execute(std::string_view query) = 0;
+  
+  virtual std::optional<query_result_set> execute_query(std::string_view query) = 0;
 
   virtual void reconnect() = 0;
 
