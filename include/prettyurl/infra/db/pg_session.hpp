@@ -4,6 +4,8 @@
 #include "prettyurl/core/utility/string_utils.hpp"
 
 #include <memory>
+#include <unordered_set>
+
 #include <pqxx/pqxx>
 
 namespace prettyurl::infra::db {
@@ -31,31 +33,60 @@ public:
   void commit_transaction() final;
   void rollback_transaction() final;
 
-  template <typename... Args>
-  std::optional<core::db::query_result_set> execute_query(std::string_view query, Args&&... args) {
-    query_params_.clear();
-
-    constexpr auto size = sizeof... (args);
-     
-    if constexpr (size > 0) {
-      query_params_.reserve(size);
-      (query_params_.push_back(core::utility::to_string(std::forward<decltype(args)>(args))), ...);
-    }
-
-    return execute(query);
+  template <typename FirstArg, typename... RestArgs>
+  std::optional<core::db::query_result_set> execute_query_with_params(std::string_view query, FirstArg&& first_arg, RestArgs&&... args) {
+    return execute_query_impl(query, std::forward<FirstArg>(first_arg), std::forward<RestArgs>(args)...);
   }
+
+  std::optional<core::db::query_result_set> execute_query(std::string_view query) final;
 
 private:
   void connect() final;
   void disconnect() final;
 
-  std::optional<core::db::query_result_set> execute(std::string_view query) final;
+  [[nodiscard]] std::pair<std::string, bool> prepare_statement(std::string_view query);
+  [[nodiscard]] core::db::query_result_set to_query_result_set(const pqxx::result& result) const;
+
+  template <typename... Args>
+  std::optional<core::db::query_result_set> execute_query_impl(std::string_view query, Args&&... args) {
+    try {
+      if (!trn_) {
+        begin_transaction();
+      }
+
+      pqxx::result res;
+
+      if constexpr (sizeof...(args) > 0) {
+        const auto [statement, is_prepared] = prepare_statement(query);
+        
+        if (!is_prepared) {
+          conn_->prepare(statement, query.data());
+        }
+
+        res = trn_->exec_prepared(statement, std::forward<Args>(args)...);
+      } else {
+        res = trn_->exec(query.data());
+      }
+
+      commit_transaction();
+
+      if (res.empty()) {
+        return std::nullopt;
+      }
+
+      return to_query_result_set(res);
+    } catch (const std::exception& e) {
+      rollback_transaction();
+
+      throw std::runtime_error("an error occured while executing sql query (" + std::string(e.what()) + ")");
+    }
+  }  
 
 private:
   std::unique_ptr<pqxx::connection> conn_;
   std::unique_ptr<pqxx::transaction<>> trn_;
 
-  std::vector<std::string> query_params_;
+  std::unordered_set<std::string> prepared_statements_;
 
   std::string conn_string_;
 };
