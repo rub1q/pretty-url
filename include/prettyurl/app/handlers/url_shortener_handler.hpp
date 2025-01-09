@@ -13,7 +13,7 @@ public:
     : service_(std::move(service)) {
   }
 
-  infra::net::http::response operator()(infra::net::http::request&& req) final;
+  [[nodiscard]] infra::net::http::response operator()(infra::net::http::request&& req) final;
 
 private:
   std::shared_ptr<services::url_shortener_service> service_;
