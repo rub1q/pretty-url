@@ -19,9 +19,8 @@ template <typename T>
                 std::is_floating_point_v<std::decay_t<T>>) {
     return std::to_string(value);
   } else if constexpr (std::is_base_of_v<std::decay_t<T>, std::basic_string<char>> || 
-                        std::is_base_of_v<std::decay_t<T>, std::basic_string_view<char>> ||
-                        std::is_same_v<std::decay_t<T>, const char*>) {
-    return value.data();
+                       std::is_same_v<std::decay_t<T>, const char*>) {
+    return value;
   } else {
     static_assert(!std::is_same_v<T, T>, "unsupported data type");
   }
