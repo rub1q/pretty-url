@@ -101,6 +101,10 @@ void json_config_parser::parse(const std::filesystem::path& path, core::config::
     if (db.HasMember("connect_timeout_sec")) {
       cfg.db.connect_timeout_sec = db["connect_timeout_sec"].GetUint();
     }
+
+    if (db.HasMember("sessions_pool_size")) {
+      cfg.db.sessions_pool_size = db["sessions_pool_size"].GetUint();
+    }
   } else {
     if (const auto db_ip = std::getenv("PRETTYURL_DB_IP"); db_ip) {
       cfg.db.ip = db_ip;
@@ -122,6 +126,10 @@ void json_config_parser::parse(const std::filesystem::path& path, core::config::
 
     if (const auto db_conn_to = std::getenv("PRETTYURL_DB_CONNECT_TIMEOUT"); db_conn_to) {
       cfg.db.connect_timeout_sec = std::stoi(db_conn_to);
+    }
+
+    if (const auto db_pool_size = std::getenv("PRETTYURL_DB_SESSIONS_POOL_SIZE"); db_pool_size) {
+      cfg.db.sessions_pool_size = std::stoi(db_pool_size);
     }
   }
 
