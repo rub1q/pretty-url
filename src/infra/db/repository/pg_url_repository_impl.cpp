@@ -56,7 +56,7 @@ void pg_url_repository_impl::add_short_url(std::string_view short_url, std::stri
 std::uint64_t pg_url_repository_impl::get_last_id() {
   auto session = dbsm_.get_session(10s);
 
-  static constinit auto sql = "select coalesce(max(id), nextval('custom_url_id_seq'::regclass))"
+  static constinit auto sql = "select coalesce(max(id), 100000)"
                               " as id from url_mapping for read only";
 
   const auto result = session->execute_query(sql);
