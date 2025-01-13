@@ -73,6 +73,7 @@ set(SOURCES
   src/core/encoding/base62_encoder.cpp
   src/core/utility/url_validator.cpp
   src/core/db/query_result_set.cpp
+  src/core/net/http/route_matcher.cpp
 
   src/app/logging/details/registry.cpp
   src/app/handlers/redirect_handler.cpp
