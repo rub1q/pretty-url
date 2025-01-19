@@ -1,6 +1,7 @@
 #pragma once
 
 #include "prettyurl/core/db/db_session_holder.hpp"
+#include "prettyurl/app/logging/log-inl.hpp"
 
 #include <memory>
 #include <mutex>
@@ -25,7 +26,19 @@ public:
     }
     
     for (std::size_t i = 0u; i < pool_size; i++) {
-      session_pool_.emplace(std::make_shared<DBSession>(std::move(conn_string)));
+      try {
+        session_pool_.emplace(std::make_shared<DBSession>(std::move(conn_string)));
+
+        PU_LOG_INF_TO("console"_logger, "db session connect... [OK]");
+        PU_LOG_INF("db session connect... [OK]");
+      } catch (const std::exception& e) {
+        PU_LOG_ERR_TO("console"_logger, "db session connect... [Fail] ({})", e.what());
+        PU_LOG_ERR("db session connect... [Fail] ({})", e.what());
+      }
+    }
+
+    if (session_pool_.empty()) {
+      throw std::runtime_error("failed to initialize db session manager");
     }
   }
 
