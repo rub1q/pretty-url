@@ -11,8 +11,8 @@ namespace prettyurl::app::services {
 class url_shortener_service final {
 public:
   explicit url_shortener_service(std::shared_ptr<core::repositories::url_repository> repo, 
-    std::unique_ptr<core::encoding::base_encoder> encoder,
-    std::unique_ptr<core::id::base_id_generator> id_generator)
+    std::shared_ptr<core::encoding::base_encoder> encoder,
+    std::shared_ptr<core::id::base_id_generator> id_generator)
     : repo_(std::move(repo))
     , encoder_(std::move(encoder))
     , id_generator_(std::move(id_generator)) {
@@ -23,8 +23,8 @@ public:
 
 private:
   std::shared_ptr<core::repositories::url_repository> repo_;
-  std::unique_ptr<core::encoding::base_encoder> encoder_;
-  std::unique_ptr<core::id::base_id_generator> id_generator_;
+  std::shared_ptr<core::encoding::base_encoder> encoder_;
+  std::shared_ptr<core::id::base_id_generator> id_generator_;
 };
 
 } // namespace prettyurl::app::services
