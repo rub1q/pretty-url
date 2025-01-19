@@ -64,6 +64,16 @@ public:
     return *this;
   }
 
+  server& read_timeout(const std::chrono::seconds& value) {
+    read_timeout_value_ = value;
+    return *this;
+  }
+
+  server& write_timeout(const std::chrono::seconds& value) {
+    write_timeout_value_ = value;
+    return *this;
+  }  
+
   void stop() override {
     signals_.clear();
     io_ctx_.stop();
@@ -73,9 +83,8 @@ private:
   void start_session(tcp::socket&& socket) {
     auto new_session = std::make_shared<session<RequestHandler>>(io_ctx_, std::move(socket), request_handler_);
 
-    // TODO: set timeout values from config
-    new_session->read_timeout(std::chrono::minutes(5));
-    new_session->write_timeout(std::chrono::minutes(5));
+    new_session->read_timeout(read_timeout_value_);
+    new_session->write_timeout(write_timeout_value_);
     new_session->start();
   }
 
@@ -107,6 +116,9 @@ private:
 
 private:
   unsigned threads_count_ { 2u };
+
+  std::chrono::seconds read_timeout_value_ { 5s };
+  std::chrono::seconds write_timeout_value_ { 5s };
 
   asio::io_context io_ctx_;
   asio::signal_set signals_ { io_ctx_, SIGINT, SIGTERM };
