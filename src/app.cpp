@@ -51,9 +51,12 @@ void application::run(const core::config::app_config& cfg) {
 
   core::db::db_session_manager<infra::db::pg_session> dbs_man(cfg.db.sessions_pool_size, cs_builder.get()); 
 
-  auto url_repo = std::make_shared<infra::db::repository::pg_url_repository_impl>(); 
+  auto url_repo = std::make_shared<infra::db::repository::pg_url_repository_impl>(dbs_man);
 
-  auto shorten_service = std::make_shared<app::services::url_shortener_service>(url_repo);
+  auto encoder = std::make_shared<core::encoding::base62_encoder>();
+  auto id_generator = std::make_shared<infra::db::auto_inc_id_generator>(url_repo);
+
+  auto shorten_service = std::make_shared<app::services::url_shortener_service>(url_repo, std::move(encoder), std::move(id_generator));
   auto redirect_service = std::make_shared<app::services::redirect_url_service>(url_repo);
 
   router.add_route("/api/v1/"sv, 
