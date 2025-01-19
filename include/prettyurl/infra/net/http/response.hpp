@@ -34,11 +34,11 @@ public:
   void prepare_payload() final;
   void clear() final;
 
-  const http_string_response& get_impl() const noexcept {
+  [[nodiscard]] const http_string_response& get_impl() const noexcept {
     return resp_impl_;
   }
 
-  http_string_response& get_impl() noexcept {
+  [[nodiscard]] http_string_response& get_impl() noexcept {
     return resp_impl_;
   }
 
