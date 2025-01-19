@@ -1,5 +1,7 @@
 #pragma once
 
+#include "prettyurl/core/config/app_config.hpp"
+
 namespace prettyurl {
 
 class application final {
@@ -10,7 +12,7 @@ public:
   application& operator=(const application&) = delete;
   application& operator=(application&&) = delete;  
 
-  static void run();
+  static void run(const core::config::app_config& cfg);
 
 private:
   application() = default;
