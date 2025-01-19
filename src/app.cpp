@@ -15,12 +15,12 @@ namespace prettyurl {
 
 using namespace std::literals;
 
-void application::run() {
+void application::run(const core::config::app_config& cfg) {
   auto clogger = app::logging::create<infra::logging::loggers::console_logger>("console");
-  auto flogger = app::logging::create<infra::logging::loggers::file_logger>("file", "/var/log/pretty-url/app.log");
+  auto flogger = app::logging::create<infra::logging::loggers::file_logger>("file", cfg.logging.path);
 
   app::logging::set_default_logger(flogger);
-  app::logging::set_log_level(core::logging::level::debug);
+  app::logging::set_log_level(core::logging::level::from_string(cfg.logging.level));
 
   PU_LOG_INF("start init app");
   PU_LOG_INF_TO("console"_logger, "start init app");
@@ -43,8 +43,10 @@ void application::run() {
   );
 
   infra::net::http::server(std::move(router))
-    .concurrency(4)
-    .listen_and_serve("127.0.0.1", 8080);
+    .concurrency(cfg.server.thread_pool_size)
+    .read_timeout(cfg.server.read_timeout_sec)
+    .write_timeout(cfg.server.write_timeout_sec)
+    .listen_and_serve(cfg.server.ip, cfg.server.port);
   
   app::logging::release();
 }
