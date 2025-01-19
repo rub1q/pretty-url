@@ -7,6 +7,8 @@ route_matcher::route_matcher(std::string_view pattern) {
 
   std::string::size_type open_brace_pos = 0u;
   std::string::size_type last_pos = open_brace_pos;
+
+  std::size_t param_idx = 0u;
   
   while ((open_brace_pos = pattern.find('{', last_pos)) != std::string::npos) {
     const auto close_brace_pos = pattern.find('}', open_brace_pos + 1);
@@ -14,9 +16,13 @@ route_matcher::route_matcher(std::string_view pattern) {
     if (close_brace_pos == std::string::npos) {
       throw std::runtime_error("unmatched '{' in route path");
     }
-
+ 
     regex_str_ += pattern.substr(last_pos, open_brace_pos - last_pos);
     regex_str_ += "([^/]+)";
+
+    const auto var_name = pattern.substr(open_brace_pos + 1, close_brace_pos - open_brace_pos - 1);
+
+    vars_idx_.emplace(std::move(var_name), param_idx++);
 
     last_pos = close_brace_pos + 1;
   }
@@ -30,15 +36,19 @@ route_matcher::route_matcher(std::string_view pattern) {
   regex_ = regex_str_;
 }
 
-std::string route_matcher::regex_str() const noexcept {
-  return regex_str_;
-}
-
-bool route_matcher::match(std::string_view route) {
+bool route_matcher::match(std::string_view path, vars_map& vars) const {
   std::smatch route_match;
-  std::string s { route };
+  std::string s { path };
 
   if (std::regex_match(s, route_match, regex_)) {
+    vars.clear();
+
+    for (const auto& [name, param_idx] : vars_idx_) {
+      if (param_idx + 1 < route_match.size()) {
+        vars[name] = route_match[param_idx + 1].str();
+      }
+    }
+
     return true;
   }
 
