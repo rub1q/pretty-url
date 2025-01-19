@@ -4,10 +4,14 @@
 #include "prettyurl/core/net/http/common.hpp"
 #include "prettyurl/infra/net/http/request.hpp"
 #include "prettyurl/infra/net/http/response.hpp"
+#include "prettyurl/core/net/http/route_matcher.hpp"
 
 #include <memory>
+#include <unordered_map>
 
 namespace prettyurl::infra::net::http {
+
+struct route_match;
 
 class route final {
 public:
@@ -16,8 +20,9 @@ public:
   route() = default;
   
   template <typename Handler>
-  explicit route(const core::net::http::emethod methods, Handler&& handler)
-    :  handler_(std::make_unique<handler_func>(std::forward<decltype(handler)>(handler))) {
+  explicit route(std::string_view path, const core::net::http::emethod methods, Handler&& handler)
+    : handler_(std::make_unique<handler_func>(std::forward<decltype(handler)>(handler)))
+    , matcher_(path) {
     methods_ |= static_cast<std::uint32_t>(methods);
   }
 
@@ -33,13 +38,30 @@ public:
     return *this;    
   }
 
+  [[nodiscard]] bool match(const request& req, route_match& rm) const;
+
   [[nodiscard]] bool is_allowed_method(const core::net::http::emethod method) const noexcept;
   [[nodiscard]] bool is_allowed_method(std::string_view method) const noexcept;
   [[nodiscard]] response handle(request&& req);
   
 private:
-  std::uint32_t methods_ { static_cast<std::uint32_t>(core::net::http::emethod::head) };  
+  std::uint32_t methods_ { static_cast<std::uint32_t>(core::net::http::emethod::head) };
   std::unique_ptr<handler_func> handler_ { nullptr };
+
+  core::net::http::route_matcher matcher_;
+};
+
+enum class match_error : std::uint8_t {
+  ok,
+  method_mismatch,
+  not_found
+};
+
+struct route_match final {
+  match_error error { match_error::ok };
+
+  route::handler_func* handler { nullptr };
+  std::unordered_map<std::string, std::string> vars;
 };
 
 } // namespace prettyurl::infra::net::http

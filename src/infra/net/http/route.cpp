@@ -16,6 +16,23 @@ bool route::is_allowed_method(std::string_view method) const noexcept {
   return is_allowed_method(method_int);  
 }
 
+bool route::match(const request& req, route_match& rm) const {
+  if (matcher_.match(req.target(), rm.vars)) {
+    if (is_allowed_method(req.method())) {
+      rm.error = match_error::ok;
+      rm.handler = handler_.get();
+
+      return true;
+    }
+
+    rm.error = match_error::method_mismatch;
+  } else {
+    rm.error = match_error::not_found;
+  }
+
+  return false;
+}
+
 response route::handle(request&& req) {
   if (!handler_) {
     throw std::runtime_error("route handler is null");
