@@ -55,4 +55,15 @@ void request::clear() {
   req_impl_ = {};
 }
 
+const request::vars_map& request::vars() const {
+  return vars_;
+}
+
+void request::vars(const vars_map& vars) {
+  vars_.clear();
+  vars_.reserve(vars.size());
+  
+  vars_ = vars;
+}
+
 } // namespace prettyurl::infra::net::http

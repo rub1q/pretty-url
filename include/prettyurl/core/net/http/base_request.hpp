@@ -2,10 +2,14 @@
 
 #include "prettyurl/core/net/http/common.hpp"
 
+#include <unordered_map>
+
 namespace prettyurl::core::net::http {
 
 class base_request {
 public:
+  using vars_map = std::unordered_map<std::string, std::string>;
+
   virtual ~base_request() = default;
 
   [[nodiscard]] virtual http::emethod method() const = 0;
@@ -14,6 +18,7 @@ public:
   [[nodiscard]] virtual std::string_view body() const = 0;
   [[nodiscard]] virtual bool keep_alive() const = 0;
   [[nodiscard]] virtual unsigned version() const = 0;
+  [[nodiscard]] virtual const vars_map& vars() const = 0;
 
   virtual void method(const http::emethod method) = 0;
   virtual void body(std::string_view body) = 0;
@@ -22,6 +27,7 @@ public:
   virtual void keep_alive(const bool keep) = 0;
   virtual void version(const unsigned version) = 0;
   virtual void clear() = 0;
+  virtual void vars(const vars_map& vars) = 0;
 };
 
 } // namespace prettyurl::core::net::http

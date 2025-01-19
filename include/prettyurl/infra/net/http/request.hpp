@@ -21,6 +21,7 @@ public:
   [[nodiscard]] std::string_view body() const final;
   [[nodiscard]] bool keep_alive() const final;
   [[nodiscard]] unsigned version() const final;
+  [[nodiscard]] const vars_map& vars() const final;
 
   void method(const core::net::http::emethod method) final;
   void body(std::string_view body) final;
@@ -29,17 +30,19 @@ public:
   void keep_alive(const bool keep) final;
   void version(const unsigned version) final;
   void clear() final;
+  void vars(const vars_map& vars) final;
 
-  const http_string_request& get_impl() const noexcept {
+  [[nodiscard]] const http_string_request& get_impl() const noexcept {
     return req_impl_;
   }
 
-  http_string_request& get_impl() noexcept {
+  [[nodiscard]] http_string_request& get_impl() noexcept {
     return req_impl_;
   }
 
 private:
   http_string_request req_impl_;
+  vars_map vars_;
 };
 
 } // namespace prettyurl::infra::net::http
