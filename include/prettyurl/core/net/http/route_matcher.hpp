@@ -3,6 +3,7 @@
 #include <string>
 #include <regex>
 #include <unordered_map>
+#include <vector>
 
 namespace prettyurl::core::net::http {
 
@@ -21,7 +22,7 @@ private:
   std::string regex_str_;
   std::regex regex_;
 
-  std::unordered_map<std::string, std::size_t> vars_idx_;
+  std::vector<std::string> vars_;
 };
 
 } // namespace prettyurl::core::net::http
