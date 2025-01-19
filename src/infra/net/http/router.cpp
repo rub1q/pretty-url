@@ -6,14 +6,14 @@ namespace prettyurl::infra::net::http {
 
 using namespace std::literals;
 
-response router::not_found(const unsigned version, bool keep_alive) const {
+response router::not_found(request&& req) const {
   response resp;
   
   resp.status_code(core::net::http::estatus::not_found);
-  resp.version(version);
+  resp.version(req.version());
   resp.body("Not Found"sv);
   resp.prepare_payload();
-  resp.keep_alive(keep_alive);
+  resp.keep_alive(req.keep_alive());
 
   resp.header("Content-Type"sv, 
     core::net::http::helpers::make_content_type_with_charset(
@@ -24,14 +24,14 @@ response router::not_found(const unsigned version, bool keep_alive) const {
   return resp;
 }
 
-response router::method_not_allowed(const unsigned version, bool keep_alive) const {
+response router::method_not_allowed(request&& req) const {
   response resp;
   
   resp.status_code(core::net::http::estatus::method_not_allowed);
-  resp.version(version);
+  resp.version(req.version());
   resp.body("Method Not Allowed"sv);
   resp.prepare_payload();
-  resp.keep_alive(keep_alive);
+  resp.keep_alive(req.keep_alive());
 
   resp.header("Content-Type"sv, 
     core::net::http::helpers::make_content_type_with_charset(
@@ -42,27 +42,24 @@ response router::method_not_allowed(const unsigned version, bool keep_alive) con
   return resp;    
 }
 
-std::optional<std::reference_wrapper<const route>> router::get(std::string_view route_path) const {
-  if (!routes_.contains(route_path.data())) {
-    return std::nullopt;
-  }
-
-  return std::cref(*(routes_.at(route_path.data()).get()));
-}
-
 response router::operator()(request&& req) {
   try {
-    const auto route_it = routes_.find(std::string(req.target()));
+    route_match rm;
 
-    if (route_it == routes_.cend()) { // TODO
-      return not_found(req.version(), req.keep_alive());
+    for (auto route : routes_) {
+      if (route->match(req, rm) && rm.handler) {
+        req.vars(rm.vars);
+        return (*rm.handler)(std::move(req));
+      } 
     }
 
-    if (!route_it->second->is_allowed_method(req.method())) {
-      return method_not_allowed(req.version(), req.keep_alive());
+    if (rm.error == match_error::method_mismatch) {
+      return method_not_allowed(std::move(req));
     }
 
-    return route_it->second->handle(std::move(req));
+    if (rm.error == match_error::not_found) {
+      return not_found(std::move(req));
+    }
   } catch (const std::exception& e) {
     PU_LOG_ERR("an error occured while handling request ({})", e.what());
     return responders::internal_server_error(req.version(), req.keep_alive());
