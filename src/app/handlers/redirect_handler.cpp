@@ -1,25 +1,45 @@
 #include "prettyurl/app/handlers/redirect_handler.hpp"
+#include "prettyurl/infra/net/http/responders.hpp"
+#include "prettyurl/app/logging/log-inl.hpp"
 
 namespace prettyurl::app::handlers {
 
 infra::net::http::response redirect_handler::operator()(infra::net::http::request&& req) {
-  infra::net::http::response resp { core::net::http::estatus::found };
+  try {
+    if (!req.vars().contains("short_url")) {
+      return infra::net::http::responders::bad_request(req.version(), req.keep_alive(), R"("message": "Invalid Route Path")");
+    }
 
-  using namespace std::literals;
+    const auto src_url = service_->get_source_url(req.vars().at("short_url"));
 
-  resp.version(req.version());
-  resp.keep_alive(req.keep_alive());
+    if (!src_url.has_value()) {
+      return infra::net::http::responders::not_found(req.version(), req.keep_alive(), R"("message": "Source Url Not Found")");
+    }
+    
+    infra::net::http::response resp { core::net::http::estatus::found };
 
-  resp.header("Content-Type"sv, 
-    core::net::http::helpers::make_content_type_with_charset(
-      core::net::http::econtent_type::application_json, 
-      core::net::http::echarset::utf8)
-  );
+    using namespace std::literals;
 
-  resp.header("Cache-Control"sv, "no-cache"sv);
-  resp.header("Location"sv, "https://www.google.com/"sv); // TODO
+    resp.version(req.version());
+    resp.keep_alive(req.keep_alive());
 
-  return resp;    
+    resp.header("Content-Type"sv, 
+      core::net::http::helpers::make_content_type_with_charset(
+        core::net::http::econtent_type::application_json, 
+        core::net::http::echarset::utf8)
+    );
+
+    resp.header("Cache-Control"sv, "no-cache"sv);
+    resp.header("Location"sv, src_url.value());
+
+    return resp;
+  } catch (const std::exception& e) {
+    PU_LOG_ERR("an error occured while processing url redirection ({})", e.what());
+    return infra::net::http::responders::internal_server_error(req.version(), req.keep_alive());
+  } catch (...) {
+    PU_LOG_ERR("an unknown error occured while processing url redirection");
+    return infra::net::http::responders::internal_server_error(req.version(), req.keep_alive());
+  }
 }
 
 } // namespace prettyurl::app::handlers
