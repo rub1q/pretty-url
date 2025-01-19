@@ -54,4 +54,12 @@ void response::clear() {
   resp_impl_.clear();
 }
 
+const http_string_response& response::get_impl() const noexcept {
+  return resp_impl_;
+}
+
+http_string_response& response::get_impl() noexcept {
+  return resp_impl_;
+}
+
 } // namespace prettyurl::infra::net::http

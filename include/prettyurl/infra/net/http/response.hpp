@@ -34,13 +34,8 @@ public:
   void prepare_payload() final;
   void clear() final;
 
-  [[nodiscard]] const http_string_response& get_impl() const noexcept {
-    return resp_impl_;
-  }
-
-  [[nodiscard]] http_string_response& get_impl() noexcept {
-    return resp_impl_;
-  }
+  [[nodiscard]] const http_string_response& get_impl() const noexcept;
+  [[nodiscard]] http_string_response& get_impl() noexcept;
 
 private:
   http_string_response resp_impl_;

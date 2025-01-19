@@ -32,13 +32,8 @@ public:
   void clear() final;
   void vars(const vars_map& vars) final;
 
-  [[nodiscard]] const http_string_request& get_impl() const noexcept {
-    return req_impl_;
-  }
-
-  [[nodiscard]] http_string_request& get_impl() noexcept {
-    return req_impl_;
-  }
+  [[nodiscard]] const http_string_request& get_impl() const noexcept;
+  [[nodiscard]] http_string_request& get_impl() noexcept;
 
 private:
   http_string_request req_impl_;

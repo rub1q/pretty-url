@@ -62,8 +62,16 @@ const request::vars_map& request::vars() const {
 void request::vars(const vars_map& vars) {
   vars_.clear();
   vars_.reserve(vars.size());
-  
+
   vars_ = vars;
+}
+
+const http_string_request& request::get_impl() const noexcept {
+  return req_impl_;
+}
+
+http_string_request& request::get_impl() noexcept {
+  return req_impl_;
 }
 
 } // namespace prettyurl::infra::net::http
