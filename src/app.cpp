@@ -4,10 +4,6 @@
 #include "prettyurl/core/encoding/base62_encoder.hpp"
 
 #include "prettyurl/app/logging/log-inl.hpp"
-#include "prettyurl/infra/logging/loggers/console_logger.hpp"
-#include "prettyurl/infra/logging/loggers/file_logger.hpp"
-#include "prettyurl/infra/net/http/server.hpp"
-#include "prettyurl/infra/net/http/router.hpp"
 #include "prettyurl/app/handlers/redirect_handler.hpp"
 #include "prettyurl/app/handlers/url_shortener_handler.hpp"
 #include "prettyurl/app/services/url_shortener_service.hpp"
@@ -59,8 +55,10 @@ void application::run(const core::config::app_config& cfg) {
   auto shorten_service = std::make_shared<app::services::url_shortener_service>(url_repo, std::move(encoder), std::move(id_generator));
   auto redirect_service = std::make_shared<app::services::redirect_url_service>(url_repo);
 
-  router.add_route("/api/v1/"sv, 
-    core::net::http::emethod::get | core::net::http::emethod::post, 
+  infra::net::http::router router;
+
+  router.add_route("/api/v1/{short_url}"sv, 
+    core::net::http::emethod::get, 
     app::handlers::redirect_handler{ std::move(redirect_service) }
   );
 
