@@ -22,7 +22,11 @@ public:
   template <typename Handler>
   explicit route(std::string_view path, const core::net::http::emethod methods, Handler&& handler)
     : handler_(std::make_unique<handler_func>(std::forward<decltype(handler)>(handler)))
-    , matcher_(path) {
+    , matcher_(std::move(path)) {
+    if (path.empty()) {
+      throw std::invalid_argument("the route path is empty");
+    }
+    
     methods_ |= static_cast<std::uint32_t>(methods);
   }
 
