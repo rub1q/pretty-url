@@ -48,8 +48,8 @@ template <typename FirstArg,
 }
 
 template <typename T>
-[[nodiscard]] inline T string_to(const std::string& value) {
-  if constexpr (std::is_same_v<T, std::string>) {
+[[nodiscard]] constexpr inline T string_to(const std::string& value) {
+  if constexpr (std::is_base_of_v<T, std::basic_string<char>>) {
     return value;
   } else if constexpr (std::is_same_v<T, bool>) {
     auto str = value;
@@ -61,18 +61,28 @@ template <typename T>
       return false;
     }
 
-    throw std::runtime_error("invalid conversation '" + value + "' to boolean type");
+    throw std::runtime_error(concat("invalid conversion '", value, "' to boolean type"));
+  } else if constexpr (std::is_same_v<T, char>) {
+    if (value.length() > 1) {
+      throw std::invalid_argument(concat("invalid conversion '", value, "' to char type"));
+    }
+
+    return value[0];
   } else if constexpr (std::is_integral_v<T> || std::is_floating_point_v<T>) {
     T result;
 
     auto [ptr, ec] = std::from_chars(value.data(), value.data() + value.length(), result);
 
     if (ec != std::errc()) {
-      throw std::runtime_error("invalid conversation '" + value + "' to integral or float type");
+      throw std::runtime_error(concat("invalid conversion '", value, "' to integral or float type"));
     }
 
     return result;
-  } 
+  } else {
+    static_assert(!std::is_same_v<T, T>, "unsupported data type");
+  }
+
+  return {};
 }
 
 } // namespace prettyurl::core::utility
