@@ -8,9 +8,12 @@
 
 namespace prettyurl::core::utility {
 
-inline void to_lower(std::string& value) {
-  std::transform(value.begin(), value.end(), value.begin(), 
-    [](unsigned char c) { return std::tolower(c); });
+constexpr inline void to_lower(std::string& value) {
+  std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+}
+
+constexpr inline void to_upper(std::string& value) {
+  std::transform(value.begin(), value.end(), value.begin(), ::toupper);
 }
 
 template <typename T>
@@ -24,6 +27,20 @@ template <typename T>
   } else {
     static_assert(!std::is_same_v<T, T>, "unsupported data type");
   }
+}
+
+template <typename FirstArg, 
+          typename SecondArg, 
+          typename... Args>
+[[nodiscard]] constexpr inline std::string concat(FirstArg&& first, SecondArg&& second, Args&&... args) {
+  std::string out = to_string(std::forward<FirstArg>(first)) + " " +
+    to_string(std::forward<SecondArg>(second));
+
+  if constexpr (sizeof... (args) > 0) {
+    ((out += " " + to_string(std::forward<Args>(args))), ...);
+  }
+
+  return out;
 }
 
 template <typename T>
