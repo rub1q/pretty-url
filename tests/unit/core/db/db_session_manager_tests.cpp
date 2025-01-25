@@ -29,7 +29,7 @@ public:
   void begin_transaction() override {};
   void commit_transaction() override {};
   void rollback_transaction() override {};
-  std::optional<core::db::query_result_set> execute(std::string_view query) override {};
+  std::optional<core::db::query_result_set> execute_query(std::string_view query) override {};
 
 private:
   void connect() override {}
