@@ -42,6 +42,10 @@ response router::method_not_allowed(request&& req) const {
   return resp;    
 }
 
+void router::add_route(std::shared_ptr<route> route) {
+  routes_.emplace_back(std::move(route));
+}
+
 response router::operator()(request&& req) {
   try {
     route_match rm;

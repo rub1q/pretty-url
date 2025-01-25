@@ -16,12 +16,10 @@ public:
 
   template <typename Handler>
   void add_route(std::string_view path, const core::net::http::emethod methods, Handler&& handler) {
-    if (path.empty()) {
-      throw std::invalid_argument("invalid route path");
-    }
-    
     routes_.emplace_back(std::make_shared<route>(path, methods, std::forward<decltype(handler)>(handler)));
   }
+
+  void add_route(std::shared_ptr<route> route);
 
 private:
   [[nodiscard]] response not_found(request&& req) const;
