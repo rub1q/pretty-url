@@ -17,7 +17,12 @@ class route final {
 public:
   using handler_func = core::net::request_handler_func<request, response>;
   
-  route() = default;
+  explicit route(std::string_view path)
+    : matcher_(std::move(path)) {
+    if (path.empty()) {
+      throw std::invalid_argument("the route path is empty");
+    }
+  }
   
   template <typename Handler>
   explicit route(std::string_view path, const core::net::http::emethod methods, Handler&& handler)
@@ -43,7 +48,6 @@ public:
   }
 
   [[nodiscard]] bool match(const request& req, route_match& rm) const;
-
   [[nodiscard]] bool is_allowed_method(const core::net::http::emethod method) const noexcept;
   [[nodiscard]] bool is_allowed_method(std::string_view method) const noexcept;
   [[nodiscard]] response handle(request&& req);
