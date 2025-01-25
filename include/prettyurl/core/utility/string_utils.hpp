@@ -17,13 +17,17 @@ constexpr inline void to_upper(std::string& value) {
 }
 
 template <typename T>
-[[nodiscard]] inline std::string to_string(T&& value) {
-  if constexpr (std::is_integral_v<std::decay_t<T>> || 
-                std::is_floating_point_v<std::decay_t<T>>) {
-    return std::to_string(value);
+[[nodiscard]] constexpr inline std::string to_string(T&& value) {
+  if constexpr (std::is_same_v<std::decay_t<T>, char>) {
+    return std::string(1, std::forward<T>(value));
+  } else if constexpr (std::is_integral_v<std::decay_t<T>> || 
+                       std::is_floating_point_v<std::decay_t<T>>) {
+    return std::to_string(std::forward<T>(value));
   } else if constexpr (std::is_base_of_v<std::decay_t<T>, std::basic_string<char>> || 
                        std::is_same_v<std::decay_t<T>, const char*>) {
     return value;
+  } else if constexpr (std::is_base_of_v<std::decay_t<T>, std::basic_string_view<char>>) {
+    return value.data();
   } else {
     static_assert(!std::is_same_v<T, T>, "unsupported data type");
   }
