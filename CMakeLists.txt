@@ -93,6 +93,7 @@ set(SOURCES
   src/infra/db/auto_inc_id_generator.cpp
   src/infra/db/pg_session.cpp
   src/infra/db/pg_connect_string_builder.cpp  
+  src/infra/caching/redis_cache.cpp    
   src/infra/config/json_config_parser.cpp
 )
 
