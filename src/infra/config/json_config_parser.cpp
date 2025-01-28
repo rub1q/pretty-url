@@ -133,6 +133,35 @@ void json_config_parser::parse(const std::filesystem::path& path, core::config::
     }
   }
 
+  if (root.HasMember("cache")) {
+    auto cache = root["cache"].GetObject();
+    
+    cfg.cache.ip = cache["ip"].GetString();
+    cfg.cache.port = cache["port"].GetUint();
+
+    if (cache.HasMember("connect_timeout_sec")) {
+      cfg.cache.connect_timeout_sec = cache["connect_timeout_sec"].GetUint();
+    }
+  } else {
+    if (const auto cache_ip = std::getenv("PRETTYURL_REDIS_IP"); cache_ip) {
+      cfg.cache.ip = cache_ip;
+    }
+
+    if (const auto cache_port = std::getenv("PRETTYURL_REDIS_PORT"); cache_port) {
+      const auto icache_port = std::stoi(cache_port);
+
+      if (icache_port < 1024 || icache_port > std::numeric_limits<std::uint16_t>::max()) {
+        throw std::runtime_error("invalid cache port value");
+      }
+
+      cfg.cache.port = icache_port;
+    }
+
+    if (const auto cache_conn_to = std::getenv("PRETTYURL_REDIS_CONN_TO"); cache_conn_to) {
+      cfg.cache.connect_timeout_sec = std::stoi(cache_conn_to);
+    }
+  }
+
   if (const auto db_user = std::getenv("PRETTYURL_DB_USER"); db_user) {
     cfg.db.username = db_user;
   } else {
@@ -149,6 +178,10 @@ void json_config_parser::parse(const std::filesystem::path& path, core::config::
     cfg.db.db_name = db_name;
   } else {
     throw std::runtime_error("db name does not specified");
+  }
+
+  if (const auto cache_pass = std::getenv("PRETTYURL_REDIS_PASS"); cache_pass) {
+    cfg.cache.password = cache_pass;
   }
 }
 
