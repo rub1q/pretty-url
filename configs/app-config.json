@@ -15,5 +15,10 @@
     "port": 5432,
     "connect_timeout_sec": 10,
     "sessions_pool_size": 5
+  },
+  "cache": {
+    "ip": "127.0.0.1",
+    "port": 6379,
+    "connect_timeout_sec": 10
   }
 }
