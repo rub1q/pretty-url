@@ -1,8 +1,25 @@
 #include "prettyurl/infra/db/pg_session.hpp"
+#include "prettyurl/infra/db/pg_connect_string_builder.hpp"
 
 #include <algorithm>
 
 namespace prettyurl::infra::db {
+
+pg_session::pg_session(const core::config::db_config& cfg) {
+  infra::db::pg_connect_string_builder cs_builder;
+  
+  cs_builder
+    .host(cfg.ip)
+    .port(cfg.port)
+    .dbname(cfg.db_name)
+    .user(cfg.username)
+    .password(cfg.password)
+    .connect_timeout(cfg.connect_timeout_sec);
+
+  conn_string_ = cs_builder.get();
+
+  connect();
+}
 
 pg_session::~pg_session() {
   if (trn_) {

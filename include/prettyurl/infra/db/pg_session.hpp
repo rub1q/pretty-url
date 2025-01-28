@@ -1,7 +1,8 @@
 #pragma once
 
-#include "prettyurl/core/db/base_db_session.hpp"
+#include "prettyurl/core/db/sql_db_session.hpp"
 #include "prettyurl/core/utility/string_utils.hpp"
+#include "prettyurl/core/config/db_config.hpp"
 
 #include <memory>
 #include <unordered_set>
@@ -10,7 +11,7 @@
 
 namespace prettyurl::infra::db {
 
-class pg_session final : public core::db::base_db_session {
+class pg_session final : public core::db::sql_db_session {
 public:
   ~pg_session();
 
@@ -20,11 +21,8 @@ public:
   pg_session& operator=(const pg_session&) = default;
   pg_session& operator=(pg_session&&) = default;
 
-  explicit pg_session(std::string_view conn_string)
-    : conn_string_(std::move(conn_string)) {
-    connect();
-  }
-
+  explicit pg_session(const core::config::db_config& cfg);
+  
   [[nodiscard]] bool is_connected() const final;
 
   void reconnect() final;

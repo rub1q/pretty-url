@@ -2,6 +2,7 @@
 
 #include "prettyurl/core/db/db_session_holder.hpp"
 #include "prettyurl/app/logging/log-inl.hpp"
+#include "prettyurl/core/config/db_config.hpp"
 
 #include <memory>
 #include <mutex>
@@ -16,18 +17,14 @@ template <typename DBSession>
 requires(std::derived_from<DBSession, base_db_session>)
 class db_session_manager {
 public:
-  explicit db_session_manager(const std::size_t pool_size, std::string_view conn_string) {
+  explicit db_session_manager(const std::size_t pool_size, const core::config::db_config& cfg) {
     if (pool_size == 0u) {
       throw std::invalid_argument("sessions pool size must be > 0");
-    }
-
-    if (conn_string.empty()) {
-      throw std::invalid_argument("connection string is empty");
     }
     
     for (std::size_t i = 0u; i < pool_size; i++) {
       try {
-        session_pool_.emplace(std::make_shared<DBSession>(std::move(conn_string)));
+        session_pool_.emplace(std::make_shared<DBSession>(cfg));
 
         PU_LOG_INF_TO("console"_logger, "db session connect... [OK]");
         PU_LOG_INF("db session connect... [OK]");
