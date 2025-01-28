@@ -9,10 +9,19 @@ std::string url_shortener_service::shorten(std::string_view src_url) {
     throw std::invalid_argument("invalid url format");
   }
 
+  if (cache_ && cache_->exists(src_url)) {
+    return *cache_->get(src_url);
+  }
+
   const auto short_url = repo_->get_short_url(src_url);
 
   if (short_url.has_value()) {
-    PU_LOG_INF("short url for source url already exists ({})", short_url.value());
+    PU_LOG_INF("short url ({}) for source url ({}) already exists", short_url.value(), src_url);
+    
+    if (cache_) {
+      cache_->set(src_url, short_url.value(), 3600);
+    }
+
     return short_url.value();
   }
 
@@ -23,6 +32,10 @@ std::string url_shortener_service::shorten(std::string_view src_url) {
   PU_LOG_INF("encoded id: {}", encoded_str);
 
   repo_->add_short_url(encoded_str, src_url);
+  
+  if (cache_) {
+    cache_->set(src_url, encoded_str, 3600);
+  }
 
   return encoded_str;
 }
