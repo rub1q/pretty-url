@@ -1,0 +1,8 @@
+.vscode
+build
+bin
+migrations
+docker
+tests
+.gitignore
+*.md
