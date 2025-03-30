@@ -6,17 +6,17 @@ project(prettyurl
 )
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED true)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
   if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "-m64 -Wall -Wextra -O0 -g3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -Wall -Wextra -O0 -g3")
   endif()
 
   add_compile_definitions(__DEBUG__)
 else()
   if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "-m64 -Wall -Wextra -O2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -Wall -Wextra -O2")
   endif()
 endif()
 
