@@ -22,7 +22,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY .. .
+COPY . .
 
 RUN mkdir -p ./build
 
@@ -33,7 +33,7 @@ RUN conan profile detect
 RUN sed -i 's/compiler=.*/compiler=gcc/' ~/.conan2/profiles/default && \
     sed -i 's/compiler.version=.*/compiler.version=12/' ~/.conan2/profiles/default && \
     echo "compiler.cppstd=20" >> ~/.conan2/profiles/default
-RUN conan install .. --build=missing -s build_type=Release --profile=default
+RUN conan install ../conanfile-docker.txt --build=missing -s build_type=Release --profile=default
 
 # init cmake
 RUN cmake \
@@ -54,12 +54,13 @@ RUN groupadd --system appgroup && \
 WORKDIR /app
 
 COPY --from=build /app/bin/Release/prettyurl .
-COPY ./configs/app-config.json ./configs
 
-RUN chown -R appuser:appgroup /app
+RUN chown -R appuser:appgroup .
+RUN mkdir -p /var/log/pretty-url && \
+    chown -R appuser:appgroup /var/log/pretty-url
 
 USER appuser
 
 EXPOSE 8080
 
-ENTRYPOINT [ "/app/prettyurl" "/configs/app-config.json"]
+ENTRYPOINT ["/app/prettyurl"] 
